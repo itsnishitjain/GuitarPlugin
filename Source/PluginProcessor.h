@@ -9,7 +9,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <opencv2/opencv.hpp>
 using namespace juce;
+
 //==============================================================================
 /**
 */
@@ -59,6 +61,10 @@ public:
 
 private:
     ScopedPointer<AudioProcessorValueTreeState> state;
+    cv::VideoCapture cap;
+    cv::Mat frame;
+    std::atomic<bool> stopSignal{ false };
+    void webcamLoop();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuitarPluginAudioProcessor)
 };

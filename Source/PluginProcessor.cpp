@@ -5,7 +5,7 @@
 
   ==============================================================================
 */
-
+#include <opencv2/opencv.hpp>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 using namespace juce;
@@ -122,12 +122,29 @@ void GuitarPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPer
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     reverbProcessor.setSampleRate(sampleRate);
+
+    stopSignal = false;
+    cap.open(0);
+    if (!cap.isOpened())
+    {
+        DBG("Error: Could not open webcam.");
+    }
+    else
+    {
+        std::thread([this] { webcamLoop(); }).detach();
+    }
 }
 
 void GuitarPluginAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    stopSignal = true;
+    if (cap.isOpened())
+    {
+        cap.release();
+    }
+    cv::destroyAllWindows();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -192,6 +209,8 @@ void GuitarPluginAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBu
     reverbParams.wetLevel = reverb_wetDry;
     reverbParams.dryLevel = 1.0f - reverb_wetDry;
 
+    distortion_volume += 10;
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer(channel);
@@ -200,7 +219,7 @@ void GuitarPluginAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBu
         {
             float cleanSig = *channelData;
 
-            *channelData *= distortion_drive * distortion_range;
+            *channelData *= (distortion_range * 0.1f);
 
             float dirtySig = (2.f / M_PI) * atan(*channelData);
 
@@ -256,6 +275,20 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
     return new GuitarPluginAudioProcessor();
 }
+
+void GuitarPluginAudioProcessor::webcamLoop()
+{
+    while (!stopSignal)
+    {
+        cap >> frame;
+        if (!frame.empty())
+        {
+            cv::imshow("Webcam", frame);
+            cv::waitKey(1);
+        }
+    }
+}
+
 
 AudioProcessorValueTreeState& GuitarPluginAudioProcessor::getState() {
     return *state;

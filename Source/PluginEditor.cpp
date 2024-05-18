@@ -6,6 +6,7 @@
   ==============================================================================
 */
 
+#include <opencv2/opencv.hpp>
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 using namespace juce;

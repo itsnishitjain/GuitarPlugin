@@ -30,9 +30,10 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2022 targetFolder="Builds/VisualStudio2022">
+    <VS2022 targetFolder="Builds/VisualStudio2022" externalLibraries="opencv_world490.lib&#10;opencv_world490d.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="GuitarPlugin"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="GuitarPlugin" headerPath="C:\Users\91987\OneDrive\Desktop\opencv\build\include"
+                       libraryPath="C:\Users\91987\OneDrive\Desktop\opencv\build\x64\vc16\lib"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="GuitarPlugin"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

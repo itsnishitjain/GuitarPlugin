@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <opencv2/opencv.hpp>
 #include "PluginProcessor.h"
 using namespace juce;
 
